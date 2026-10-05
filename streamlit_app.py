@@ -8,7 +8,7 @@ st.title("🎓 Placement Management System")
 
 menu = st.sidebar.selectbox(
     "Navigate",
-    ["Students", "Companies", "Drives", "Applications", "Apply to a Drive"]
+    ["Students", "Companies", "Drives", "Applications", "Apply to a Drive","Predictions"]
 )
 
 # ---------- STUDENTS ----------
@@ -68,3 +68,19 @@ elif menu == "Apply to a Drive":
                 st.success(f"Application submitted! ID: {response.json()['application_id']}")
             else:
                 st.error(f"Failed: {response.json().get('error', 'Unknown error')}")
+# ---------- PREDICTIONS ----------
+elif menu == "Predictions":
+    st.header("🔮 Placement Prediction")
+
+    student_id = st.number_input("Enter Student ID", min_value=1, step=1)
+
+    if st.button("Generate Prediction"):
+        response = requests.post(f"{API_URL}/predict/{int(student_id)}")
+        if response.status_code == 200:
+            result = response.json()
+            st.success(f"{result['name']} — Placement Probability: {result['placement_probability'] * 100:.1f}%")
+            st.progress(result['placement_probability'])
+        elif response.status_code == 404:
+            st.error("Student not found. Check the ID and try again.")
+        else:
+            st.error("Something went wrong generating the prediction.")
