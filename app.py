@@ -422,5 +422,8 @@ def login_admin():
     return do_login("admin", "admin_id")
 
 
+from reports_routes import register_reports
+register_reports(app, get_db_connection, clean)
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
